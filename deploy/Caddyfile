@@ -1,0 +1,10 @@
+# HTTPS in front of the app. setup.sh replaces __DOMAIN__ with <public-ip-with-dashes>.sslip.io,
+# which resolves to the VM, so Caddy can get a Let's Encrypt certificate without a domain purchase.
+__DOMAIN__ {
+	encode gzip
+	header -Server
+	request_body {
+		max_size 64KB
+	}
+	reverse_proxy 127.0.0.1:8000
+}

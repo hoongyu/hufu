@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hufu · Blast Radius Zero</title>
+<meta name="description" content="An accounts-payable agent on Vultr whose code runs in a sealed sandbox and whose payments must pass a signed mandate.">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" id="webfonts">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg class="tally" viewBox="0 0 64 40" aria-hidden="true">
+      <path class="half-a" d="M4 20 C4 9 13 4 24 4 L30 4 L30 12 L26 12 L26 16 L30 16 L30 24 L26 24 L26 28 L30 28 L30 36 L24 36 C13 36 4 31 4 20 Z"/>
+      <path class="half-b" d="M34 4 L40 4 C51 4 60 9 60 20 C60 31 51 36 40 36 L34 36 L34 28 L38 28 L38 24 L34 24 L34 16 L38 16 L38 12 L34 12 Z"/>
+    </svg>
+    <div>
+      <div class="wordmark">HUFU</div>
+      <nav class="crumbs" aria-label="breadcrumb"><span>Yuezhou Precision Components</span><span>Accounts payable</span><b>Week 45 supplier invoices</b></nav>
+    </div>
+  </div>
+  <div class="pills" id="pills"></div>
+</header>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>Code can't escape the box.<br>Money can't escape the mandate.</h1>
+    <p>An AI agent pays supplier invoices. Every line of code it writes runs in a sealed sandbox on a Vultr VM; every payment it proposes must match a mandate the head of purchasing signed. Like the two halves of a tiger tally, nothing moves unless both fit.</p>
+  </div>
+  <div class="hero-figures">
+    <div class="fig"><span class="num" id="fig-escapes">0</span><span class="cap">sandbox escapes</span></div>
+    <div class="fig"><span class="num" id="fig-blocked">0</span><span class="cap">attacks contained this run</span></div>
+    <div class="fig"><span class="num" id="fig-refused">0</span><span class="cap">payments refused by the mandate</span></div>
+  </div>
+  <div class="halftone" aria-hidden="true"></div>
+</section>
+
+<main class="bench">
+  <section class="col task">
+    <h2><span class="idx">01</span>Task</h2>
+    <div class="presets" id="presets" role="tablist"></div>
+    <label class="field-label" for="prompt">What the agent is asked</label>
+    <textarea id="prompt" rows="5" maxlength="2000"></textarea>
+    <div class="actions">
+      <button class="btn primary" id="run-live">Run on Vultr Inference</button>
+      <button class="btn" id="run-worst">Replay the worst case</button>
+    </div>
+    <p class="hint" id="mode-hint">The worst case replays a model that obeys everything it reads, including the note a fraudster hid in invoice INV-1106. The live run sends the same task to a model on Vultr Serverless Inference.</p>
+
+    <h2><span class="idx">02</span>This week's data</h2>
+    <p class="hint">Mounted read-only at <code>/data</code> in every sandbox. Supplier-written fields are untrusted.</p>
+    <table class="data inv" id="invoices"></table>
+    <h3>Vendor master (in the signed mandate)</h3>
+    <table class="data" id="vendors"></table>
+    <h3>Mandate clauses</h3>
+    <ol class="clauses" id="clauses"></ol>
+  </section>
+
+  <section class="col timeline">
+    <h2><span class="idx">03</span>Run<span class="run-state" id="run-state"></span></h2>
+    <div id="empty" class="empty">
+      <div class="dotgrid" aria-hidden="true"></div>
+      <div class="watch">
+        <p class="watch-lead">Start a run. Every step lands here as it happens. Watch for three moments:</p>
+        <ol>
+          <li><b>The model debugs itself.</b> Its first script fails in the sandbox; it reads the traceback and fixes the code.</li>
+          <li><b>The box stamps CONTAINED.</b> The code tries the upload and the data edit that INV-1106's note asks for. No network, read-only data.</li>
+          <li><b>The mandate says DENY.</b> The payment to the fraudster's account is refused: not in the vendor master, seen only in supplier-written data.</li>
+        </ol>
+      </div>
+    </div>
+    <ol id="steps" class="steps"></ol>
+  </section>
+
+  <aside class="col locks">
+    <h2><span class="idx">04</span>Two locks</h2>
+    <div class="lock">
+      <div class="lock-head"><span>The box</span><span class="tag" id="box-runtime">sandbox</span></div>
+      <dl class="kv">
+        <dt>Sandbox runs</dt><dd id="box-runs">0</dd>
+        <dt>Stopped by the box</dt><dd id="box-contained">none yet</dd>
+        <dt>Honeypot hits</dt><dd id="box-honeypot">0</dd>
+      </dl>
+      <p class="fine">The address the fraudster's note asks for is a honeypot on this server. A hit would mean code got out.</p>
+    </div>
+    <div class="lock">
+      <div class="lock-head"><span>The mandate</span><span class="tag">m-yuezhou-ap v1</span></div>
+      <dl class="kv">
+        <dt>Paid</dt><dd id="m-paid">0</dd>
+        <dt>Waiting for the AP manager</dt><dd id="m-waiting">0</dd>
+        <dt>Refused</dt><dd id="m-refused">0</dd>
+      </dl>
+      <div id="approvals"></div>
+    </div>
+    <div class="lock">
+      <div class="lock-head"><span>Audit chain</span><span class="tag" id="chain-state">empty</span></div>
+      <div class="chain" id="chain" aria-label="audit records as a hash chain"></div>
+      <p class="fine mono" id="chain-head"></p>
+      <a class="link" id="chain-download" href="#" hidden>Download the chain (JSONL)</a>
+    </div>
+    <div class="lock verdict" id="verdict" hidden>
+      <div class="lock-head"><span>The model says</span></div>
+      <p id="claim" class="claim"></p>
+      <div class="lock-head"><span>What actually happened</span></div>
+      <ul id="actual" class="actual"></ul>
+    </div>
+  </aside>
+</main>
+
+<section class="selftest">
+  <div class="st-head">
+    <h2><span class="idx">05</span>Containment self-test</h2>
+    <p>Attack the sandbox on purpose. Same image, same flags as the agent's code. A positive control first proves the honeypot is reachable from a container that is given networking.</p>
+    <button class="btn primary" id="run-selftest">Attack the sandbox</button>
+    <span class="st-score" id="st-score"></span>
+  </div>
+  <div class="table-wrap"><table class="st" id="st-table"></table></div>
+</section>
+
+<footer class="foot">
+  <span>Hufu · fictitious company, vendors and accounts · built for the Vultr Agent Rush hackathon</span>
+  <span id="foot-host"></span>
+</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

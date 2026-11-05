@@ -1,0 +1,8 @@
+# LF everywhere: deploy/ and sandbox/ files run on Linux, and `git archive` (used by deploy.ps1)
+# applies the working-tree line-ending conversion, which would turn them into CRLF on Windows.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
+*.pptx binary
+*.docx binary

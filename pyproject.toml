@@ -1,0 +1,49 @@
+[project]
+name = "liangan-hufu"
+version = "0.1.0"
+description = "Hufu: an accounts-payable agent with two locks, a sandbox for its code and a mandate for its payments"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "mandate-engine[llm] @ git+https://github.com/hoongyu/mandate-engine@v0.1.0",
+    "matplotlib>=3.9",
+    "python-pptx>=1.0",
+    "uvicorn>=0.32",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.7",
+    "mypy>=1.13",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+packages = ["factory", "evals", "app"]
+
+[[tool.mypy.overrides]]
+module = ["litellm", "litellm.*", "matplotlib", "matplotlib.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["engine", "engine.*"]
+follow_untyped_imports = true  # mandate-engine ships no py.typed; its own gate is mypy --strict

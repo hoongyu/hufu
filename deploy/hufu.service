@@ -1,0 +1,32 @@
+[Unit]
+Description=Hufu accounts-payable agent (Vultr Agent Rush)
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+User=hufu
+Group=hufu
+SupplementaryGroups=docker
+WorkingDirectory=/opt/hufu
+Environment=HOME=/var/lib/hufu DOCKER_CONFIG=/var/lib/hufu/.docker HUFU_DATA_DIR=/var/lib/hufu
+EnvironmentFile=/etc/hufu/hufu.env
+EnvironmentFile=-/etc/hufu/secrets.env
+ExecStart=/opt/hufu/.venv/bin/uvicorn app.server:app --host 127.0.0.1 --port 8000 --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=on-failure
+RestartSec=3
+
+# The app itself is hardened too: read-only system, its own /tmp, writes only to its data dir.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/hufu
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

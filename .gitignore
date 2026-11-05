@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets: VULTR_INFERENCE_API_KEY lives here, never in git
+.env
+
+# Generated
+out/
+
+# Web app runtime data (per-run worlds, audit logs, returned files)
+var/

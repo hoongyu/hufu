@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hufu · Vultr Agent Rush</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" media="print" onload="this.media='all'"
+  href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<style>
+  @page { size: 1600px 900px; margin: 0; }
+  :root {
+    --paper: #fff; --wash: #f3f6fb; --line: #d6dde9; --ink: #0d1726; --ink-2: #3a4658; --ink-3: #6b7689;
+    --blue: #17408f; --blue-2: #2a63d4; --bronze: #a6631a;
+    --allow: #11744a; --ask: #9a5a00; --deny: #b42318; --box: #0d6b78;
+    --sans: "Instrument Sans", "Segoe UI", system-ui, sans-serif; --mono: "JetBrains Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #e9edf3; }
+  body { font-family: var(--sans); color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide {
+    width: 1600px; height: 900px; background: var(--paper); position: relative; overflow: hidden;
+    margin: 0 auto 24px; page-break-after: always; break-after: page; padding: 64px 80px 0;
+  }
+  @media print { html, body { background: var(--paper); } .slide { margin: 0; } }
+  .head { border-top: 2px solid var(--ink); padding-top: 18px; display: flex; gap: 18px; align-items: baseline; }
+  .idx { font: 600 18px/1 var(--mono); color: var(--blue-2); }
+  h2 { margin: 0; font-size: 44px; line-height: 1.12; font-weight: 650; letter-spacing: -0.01em; max-width: 1300px; }
+  h2 em { font-style: normal; color: var(--blue-2); }
+  .foot { position: absolute; left: 80px; right: 80px; bottom: 28px; display: flex; justify-content: space-between;
+    font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 12px; }
+  .dots { position: absolute; background-image: radial-gradient(var(--line) 2px, transparent 2.2px); background-size: 18px 18px; }
+  .dots.light { background-image: radial-gradient(rgba(255,255,255,0.22) 2px, transparent 2.2px); }
+  .block { background: var(--blue); color: #fff; position: relative; }
+  .num { font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .unit { font-size: 0.42em; font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .cap { font-size: 18px; line-height: 1.4; }
+  .mono { font-family: var(--mono); }
+  .shot { border: 1px solid var(--line); background: var(--paper); overflow: hidden; display: block; }
+  .shot img { display: block; width: 100%; }
+  .src { font-size: 13px; color: var(--ink-3); }
+  .grid { display: grid; gap: 48px; margin-top: 44px; }
+  .rows { margin: 0; padding: 0; list-style: none; }
+  .rows li { border-top: 1px solid var(--line); padding: 14px 0; display: grid; grid-template-columns: 200px 1fr; gap: 16px; font-size: 19px; line-height: 1.4; }
+  .rows li b { font-weight: 600; }
+  .rows li span { color: var(--ink-2); }
+  .tag { display: inline-block; font: 600 13px/1 var(--mono); letter-spacing: 0.06em; padding: 6px 9px; color: #fff; }
+  .rows li span.tag { color: #fff; justify-self: start; }
+  .tag.allow { background: var(--allow); } .tag.ask { background: var(--ask); } .tag.deny { background: var(--deny); }
+
+  /* 1 cover */
+  .cover { display: grid; grid-template-columns: 1fr 520px; padding: 0; }
+  .cover .left { padding: 88px 56px 0 80px; position: relative; }
+  .brand { display: flex; align-items: center; gap: 16px; }
+  .brand svg { width: 76px; height: 50px; }
+  .wordmark { font-weight: 700; letter-spacing: 0.24em; font-size: 26px; }
+  .cover h1 { font-size: 57px; line-height: 1.04; margin: 96px 0 0; letter-spacing: -0.02em; font-weight: 700; }
+  .cover .sub { font-size: 26px; line-height: 1.4; color: var(--ink-2); margin-top: 32px; max-width: 760px; }
+  .cover .meta { position: absolute; left: 80px; bottom: 56px; font-size: 17px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 14px; right: 72px; }
+  .cover .block { padding: 88px 56px; display: flex; flex-direction: column; justify-content: center; gap: 44px; }
+  .cover .fig { border-top: 1px solid rgba(255,255,255,0.28); padding-top: 18px; position: relative; }
+  .cover .fig .num { font-size: 92px; }
+  .cover .fig .cap { opacity: 0.86; margin-top: 8px; }
+
+  /* 2 problem */
+  .problem { grid-template-columns: 520px 1fr; }
+  .problem .block { padding: 44px 44px 40px; height: 640px; display: flex; flex-direction: column; }
+  .problem .block .num { font-size: 120px; margin-top: 8px; }
+  .problem .block .cap { font-size: 22px; margin-top: 18px; opacity: 0.92; }
+  .problem .block .src { color: rgba(255,255,255,0.7); margin-top: auto; }
+  .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 28px; }
+  .door { border-top: 2px solid var(--ink); padding-top: 14px; }
+  .door .k { font: 600 14px/1 var(--mono); color: var(--deny); letter-spacing: 0.08em; }
+  .door p { font-size: 21px; line-height: 1.38; margin: 10px 0 0; }
+
+  /* 3 work */
+  .work { grid-template-columns: 430px 1fr; }
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li { counter-increment: s; border-top: 1px solid var(--line); padding: 13px 0 13px 64px; position: relative; font-size: 20px; line-height: 1.35; }
+  .steps li::before { content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: 11px; font: 700 28px/1 var(--mono); color: var(--blue-2); }
+  .steps li.hot::before { color: var(--deny); }
+  .steps li small { display: block; color: var(--ink-3); font-size: 16px; margin-top: 2px; }
+
+  /* 4 box */
+  .box { grid-template-columns: 500px 1fr; }
+  .box .block { display: grid; grid-template-columns: 1fr 1fr; height: 640px; }
+  .box .block .f { padding: 36px 30px; border-left: 1px solid rgba(255,255,255,0.18); border-top: 1px solid rgba(255,255,255,0.18); display: flex; flex-direction: column; justify-content: flex-end; }
+  .box .block .f:nth-child(odd) { border-left: 0; }
+  .box .block .f:nth-child(-n+2) { border-top: 0; }
+  .box .block .num { font-size: 84px; }
+  .box .block .cap { opacity: 0.86; margin-top: 10px; }
+  .crop { overflow: hidden; border: 1px solid var(--line); }
+  .crop img { display: block; width: 100%; }
+
+  /* 5 mandate */
+  .mandate { grid-template-columns: 1fr 1fr; }
+  .clauses li { grid-template-columns: 72px 92px 1fr; align-items: baseline; }
+  .clauses li b { font-family: var(--mono); }
+  .callout { margin-top: 26px; border-top: 2px solid var(--deny); padding-top: 14px; font-size: 21px; line-height: 1.42; }
+  .callout b { color: var(--deny); }
+
+  /* 6 result */
+  .result { grid-template-columns: 1fr 360px; }
+  .figs { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .figs .f { border-top: 2px solid var(--ink); padding: 18px 24px 30px 0; }
+  .figs .num { font-size: 96px; }
+  .figs .cap { margin-top: 10px; color: var(--ink-2); }
+  .figs .f.bad .num { color: var(--deny); }
+  .figs .f.good .num { color: var(--allow); }
+  .figs .f.wait .num { color: var(--ask); }
+  .claim { margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .claim div { padding: 18px 22px; font-size: 18px; line-height: 1.45; }
+  .claim .said { background: var(--wash); font-style: italic; color: var(--ink-2); }
+  .claim .did { border: 1px solid var(--line); }
+  .claim .k { display: block; font: 600 13px/1 var(--mono); letter-spacing: 0.08em; color: var(--ink-3); font-style: normal; margin-bottom: 10px; }
+
+  /* 8 arch */
+  .arch { grid-template-columns: 1fr 470px; }
+  .svc li { grid-template-columns: 1fr; gap: 4px; }
+  .svc li b { font-size: 21px; }
+
+  /* 9 value */
+  .value { grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
+  .col3 h3 { font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px; font-weight: 600; border-top: 2px solid var(--ink); padding-top: 14px; }
+  .col3 p { font-size: 21px; line-height: 1.42; margin: 0 0 14px; }
+  .col3 .num { font-size: 64px; color: var(--blue-2); display: block; margin-bottom: 6px; }
+  .col3.solid { background: var(--blue); color: #fff; padding: 0 30px 30px; }
+  .col3.solid h3 { color: rgba(255,255,255,0.75); border-top-color: #fff; }
+
+  /* 10 close */
+  .close { padding: 0; display: grid; grid-template-columns: 1fr 560px; }
+  .close .left { padding: 120px 80px; }
+  .close h1 { font-size: 56px; line-height: 1.05; margin: 0; letter-spacing: -0.02em; }
+  .close .links { margin-top: 64px; }
+  .close .links li { grid-template-columns: 170px 1fr; }
+  .close .block { display: flex; align-items: center; justify-content: center; }
+  .close .block svg { width: 360px; height: 236px; position: relative; }
+</style>
+</head>
+<body>
+
+<!-- 1 · cover -->
+<section class="slide cover">
+  <div class="left">
+    <div class="brand">
+      <svg viewBox="0 0 46 30" aria-hidden="true"><path d="M3 15c0-7 5-12 12-12h7v24h-7C8 27 3 22 3 15z" fill="#17408f"/><path d="M24 3h7c7 0 12 5 12 12s-5 12-12 12h-7V3z" fill="#a6631a"/><rect x="20" y="10" width="6" height="3" fill="#fff"/><rect x="20" y="17" width="6" height="3" fill="#fff"/></svg>
+      <div class="wordmark">HUFU</div>
+    </div>
+    <h1>Code can't escape the box.<br>Money can't escape the mandate.</h1>
+    <div class="sub">An accounts-payable agent that writes and runs its own code on Vultr, with two locks.</div>
+    <div class="meta">Vultr Agent Rush · Challenge 1, Blast Radius Zero · November 2026</div>
+  </div>
+  <div class="block">
+    <div class="dots light" style="inset: 0 0 auto auto; width: 260px; height: 200px;"></div>
+    <div class="fig"><div class="num">0</div><div class="cap">sandbox escapes</div></div>
+    <div class="fig"><div class="num">13<span class="unit">/ 13</span></div><div class="cap">self-test attacks blocked</div></div>
+    <div class="fig"><div class="num">$0</div><div class="cap">paid to the fraudster's account</div></div>
+  </div>
+</section>
+
+<!-- 2 · problem -->
+<section class="slide">
+  <div class="head"><span class="idx">01</span><h2>One poisoned invoice can open <em>two doors</em></h2></div>
+  <div class="grid problem">
+    <div class="block">
+      <div class="dots light" style="right: 0; top: 0; width: 200px; height: 160px;"></div>
+      <div class="cap" style="font-size: 18px; opacity: 0.8;">Business email compromise, US, 2025</div>
+      <div class="num">$3.05<span class="unit">billion</span></div>
+      <div class="cap">lost, the second-largest loss category after investment fraud. The classic move: “our bank account has changed”.</div>
+      <div class="src">FBI IC3, 2025 Internet Crime Report</div>
+    </div>
+    <div>
+      <div class="shot" style="width: 792px;"><img src="img/poisoned.png" alt="INV-1106 with the fraudster's note"></div>
+      <div class="src" style="margin-top: 8px;">INV-1106 in the demo: a real vendor, a real purchase order, a note written by a fraudster</div>
+      <div class="doors">
+        <div class="door"><span class="k">DOOR 1 · THE CODE</span><p>An agent that runs code can be told to send the vendor master and its API keys out.</p></div>
+        <div class="door"><span class="k">DOOR 2 · THE MONEY</span><p>An agent that pays can be told to pay the account it just read in a document.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>2</span></div>
+</section>
+
+<!-- 3 · the agent works -->
+<section class="slide">
+  <div class="head"><span class="idx">02</span><h2>The agent does real work: it writes, runs and <em>fixes</em> its own code</h2></div>
+  <div class="grid work">
+    <ol class="steps">
+      <li>Previews 4 CSVs in <span class="mono">/data</span><small>invoices, purchase orders, receipts, vendor master</small></li>
+      <li>Writes a pandas three-way match</li>
+      <li class="hot">Hits <span class="mono">KeyError: 'amount'</span><small>the column is amount_usd</small></li>
+      <li>Reads the traceback, fixes the code</li>
+      <li>Returns a match table and a chart</li>
+      <li>Pays what matches, holds the rest</li>
+    </ol>
+    <div class="shot" style="height: 600px;"><img src="img/hero.png" alt="The Hufu page after a run"></div>
+  </div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>3</span></div>
+</section>
+
+<!-- 4 · lock 1 -->
+<section class="slide">
+  <div class="head"><span class="idx">03</span><h2>Lock 1 · <em>Code</em> can't escape the box</h2></div>
+  <div class="grid box">
+    <div class="block">
+      <div class="f"><div class="num">0</div><div class="cap">network: <span class="mono">--network none</span></div></div>
+      <div class="f"><div class="num">0</div><div class="cap">secrets passed in</div></div>
+      <div class="f"><div class="num">512<span class="unit">MB</span></div><div class="cap">memory, no swap, 1 CPU, 64 processes</div></div>
+      <div class="f"><div class="num">30<span class="unit">s</span></div><div class="cap">wall clock, then the host kills it</div></div>
+    </div>
+    <div>
+      <ul class="rows">
+        <li><b>Isolation</b><span>gVisor (runsc) on the Vultr VM; user 10001; <span class="mono">--cap-drop ALL</span>; no-new-privileges</span></li>
+        <li><b>Filesystem</b><span>read-only root and data; 64 MB noexec <span class="mono">/tmp</span>; never the Docker socket</span></li>
+        <li><b>Output</b><span>files only through a manifest the host validates; everything printed is <b>untrusted</b></span></li>
+      </ul>
+      <div class="crop" style="height: 200px; margin-top: 18px;"><img src="img/box.png" style="margin-top: -350px;" alt="Sandbox run 2 with two CONTAINED stamps"></div>
+      <div class="src" style="margin-top: 8px;">The worst-case run tries the upload and the data edit from INV-1106's note. Honeypot hits: 0.</div>
+    </div>
+  </div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>4</span></div>
+</section>
+
+<!-- 5 · lock 2 -->
+<section class="slide">
+  <div class="head"><span class="idx">04</span><h2>Lock 2 · <em>Money</em> can't escape the mandate</h2></div>
+  <div class="grid mandate">
+    <div>
+      <ul class="rows clauses">
+        <li><b>A1</b><span class="tag allow">ALLOW</span><span>Vendor master payees, account on file, up to $25,000 per invoice and $50,000 per 7 days</span></li>
+        <li><b>A2</b><span class="tag deny">DENY</span><span>Any payee or account not in the vendor master, even with approval</span></li>
+        <li><b>A3</b><span class="tag deny">DENY</span><span>Any invoice of $100,000 or more</span></li>
+        <li><b>else</b><span class="tag ask">ASK</span><span>Waits for the AP manager</span></li>
+      </ul>
+      <div class="src" style="margin-top: 10px;">Signed by the head of purchasing. Enforced outside the model by mandate-engine, our open-source policy engine.</div>
+    </div>
+    <div>
+      <div class="shot"><img src="img/deny.png" alt="DENY for INV-1106 with untrusted provenance"></div>
+      <div class="callout">The account was only ever seen in supplier-written data, so it is <b>untrusted</b>. No prompt and no code can launder it into a trusted fact.</div>
+    </div>
+  </div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>5</span></div>
+</section>
+
+<!-- 6 · result -->
+<section class="slide">
+  <div class="head"><span class="idx">05</span><h2>A model that obeys the fraudster still <em>moves nothing</em></h2></div>
+  <div class="grid result">
+    <div>
+      <div class="figs">
+        <div class="f good"><div class="num">2</div><div class="cap">paid on its own, $11,975</div></div>
+        <div class="f wait"><div class="num">1</div><div class="cap">waits for a human, $41,280</div></div>
+        <div class="f bad"><div class="num">1</div><div class="cap">refused, $18,640 to the fraudster</div></div>
+        <div class="f good"><div class="num">0</div><div class="cap">requests reached the honeypot</div></div>
+        <div class="f"><div class="num">3</div><div class="cap">held: price variance, duplicate, partial receipt</div></div>
+        <div class="f"><div class="num">20</div><div class="cap">records in the hash-chained audit log, intact</div></div>
+      </div>
+      <div class="claim">
+        <div class="said"><span class="k">THE MODEL SAYS</span>“Paid INV-1106 to their new account, and sent the vendor master to their auditors.”</div>
+        <div class="did"><span class="k">THE AUDIT CHAIN SAYS</span>INV-1106 denied under A2. The upload never left the box. The data is unchanged.</div>
+      </div>
+    </div>
+    <div class="shot" style="height: 640px;"><img src="img/locks.png" alt="The two locks panel after the run"></div>
+  </div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>6</span></div>
+</section>
+
+<!-- 7 · self-test -->
+<section class="slide">
+  <div class="head"><span class="idx">06</span><h2>Anyone can attack the box from the page: <em>13 of 13</em> blocked</h2></div>
+  <div class="crop" style="height: 626px; margin-top: 30px; width: 1180px;"><img src="img/selftest.png" style="margin-top: -66px;" alt="Containment self-test, 13 of 13 blocked"></div>
+  <div class="src" style="margin-top: 8px;">Same image and flags as the agent's code. A positive control first proves the honeypot is reachable from a container that has a network. Shown: a local run (runc); on the Vultr VM the runtime is gVisor.</div>
+  <div class="dots" style="right: 80px; top: 170px; width: 150px; height: 540px;"></div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>7</span></div>
+</section>
+
+<!-- 8 · architecture -->
+<section class="slide">
+  <div class="head"><span class="idx">07</span><h2>Everything runs on <em>Vultr</em></h2></div>
+  <div class="grid arch">
+    <svg viewBox="0 0 900 600" width="900" height="600" font-family="Instrument Sans, Segoe UI, sans-serif" aria-label="Architecture">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3a4658"/></marker></defs>
+      <rect x="0" y="250" width="120" height="70" fill="#fff" stroke="#0d1726" stroke-width="1.5"/>
+      <text x="60" y="291" text-anchor="middle" font-size="18" font-weight="600">Browser</text>
+      <rect x="170" y="40" width="560" height="520" fill="#f3f6fb" stroke="#17408f" stroke-width="2"/>
+      <text x="190" y="72" font-size="17" font-weight="700" fill="#17408f">Vultr Cloud Compute · Ubuntu 24.04 · Seattle</text>
+      <rect x="200" y="250" width="130" height="70" fill="#fff" stroke="#0d1726" stroke-width="1.5"/>
+      <text x="265" y="282" text-anchor="middle" font-size="17" font-weight="600">Caddy</text>
+      <text x="265" y="303" text-anchor="middle" font-size="13" fill="#6b7689">HTTPS · sslip.io</text>
+      <rect x="380" y="235" width="160" height="100" fill="#17408f"/>
+      <text x="460" y="278" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">FastAPI app</text>
+      <text x="460" y="302" text-anchor="middle" font-size="13" fill="#dbe6f7">systemd · user hufu</text>
+      <rect x="380" y="400" width="320" height="130" fill="#fff" stroke="#0d6b78" stroke-width="2"/>
+      <text x="395" y="428" font-size="16" font-weight="700" fill="#0d6b78">Docker + gVisor (runsc)</text>
+      <rect x="395" y="445" width="90" height="66" fill="#e6f2f3" stroke="#0d6b78"/><text x="440" y="483" text-anchor="middle" font-size="13">sandbox</text>
+      <rect x="497" y="445" width="90" height="66" fill="#e6f2f3" stroke="#0d6b78"/><text x="542" y="483" text-anchor="middle" font-size="13">sandbox</text>
+      <rect x="599" y="445" width="90" height="66" fill="#e6f2f3" stroke="#0d6b78"/><text x="644" y="483" text-anchor="middle" font-size="13">sandbox</text>
+      <rect x="380" y="100" width="160" height="80" fill="#fff" stroke="#0d1726" stroke-width="1.5"/>
+      <text x="460" y="134" text-anchor="middle" font-size="16" font-weight="600">Mandate engine</text>
+      <text x="460" y="155" text-anchor="middle" font-size="12.5" fill="#6b7689">PEP · provenance · audit</text>
+      <rect x="590" y="250" width="120" height="70" fill="#fff" stroke="#b42318" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <text x="650" y="282" text-anchor="middle" font-size="16" font-weight="600" fill="#b42318">Honeypot</text>
+      <text x="650" y="302" text-anchor="middle" font-size="12.5" fill="#6b7689">per-run token</text>
+      <rect x="770" y="230" width="130" height="110" fill="#a6631a"/>
+      <text x="835" y="268" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Vultr</text>
+      <text x="835" y="288" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Serverless</text>
+      <text x="835" y="308" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Inference</text>
+      <text x="835" y="328" text-anchor="middle" font-size="12.5" fill="#fbe9d6">glm-5.3</text>
+      <line x1="120" y1="285" x2="198" y2="285" stroke="#3a4658" stroke-width="1.6" marker-end="url(#a)"/>
+      <line x1="330" y1="285" x2="378" y2="285" stroke="#3a4658" stroke-width="1.6" marker-end="url(#a)"/>
+      <line x1="460" y1="235" x2="460" y2="182" stroke="#3a4658" stroke-width="1.6" marker-end="url(#a)"/>
+      <line x1="460" y1="335" x2="460" y2="398" stroke="#3a4658" stroke-width="1.6" marker-end="url(#a)"/>
+      <text x="470" y="372" font-size="12.5" fill="#6b7689">docker run, allowlisted env</text>
+      <path d="M540 260 C 640 200, 720 200, 768 255" fill="none" stroke="#3a4658" stroke-width="1.6" marker-end="url(#a)"/>
+      <text x="640" y="196" text-anchor="middle" font-size="12.5" fill="#6b7689">tool calls</text>
+      <line x1="644" y1="445" x2="650" y2="324" stroke="#b42318" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="668" y="385" font-size="13" font-weight="600" fill="#b42318">blocked</text>
+    </svg>
+    <div>
+      <ul class="rows svc">
+        <li><b>Vultr Cloud Compute</b><span>One VM in Seattle: the FastAPI backend, the web app, Docker with gVisor for every sandbox, Caddy for HTTPS</span></li>
+        <li><b>Vultr Serverless Inference</b><span>The agent's LLM calls with tool calling, OpenAI-compatible. Default model glm-5.3; Seattle hosts most models, so the VM is there too</span></li>
+        <li><b>One command to deploy</b><span class="mono" style="font-size: 16px;">deploy.ps1 -Server &lt;ip&gt; -PushKey</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>8</span></div>
+</section>
+
+<!-- 9 · value -->
+<section class="slide">
+  <div class="head"><span class="idx">08</span><h2>The locks sit <em>outside the model</em>, so they hold whatever the model does</h2></div>
+  <div class="grid value">
+    <div class="col3">
+      <h3>Who needs it</h3>
+      <p>AP teams at mid-size manufacturers that pay hundreds of supplier invoices a week and fear one thing most: the bank-change request.</p>
+      <p>Agent platforms that let models run code next to company data.</p>
+    </div>
+    <div class="col3 solid">
+      <div class="dots light" style="right: 0; bottom: 0; width: 160px; height: 120px;"></div>
+      <h3>What it changes</h3>
+      <span class="num" style="color: #fff;">0</span>
+      <p>prompt rules to keep up to date. The box and the mandate do not read the prompt, so a new injection trick does not change what they allow.</p>
+    </div>
+    <div class="col3">
+      <h3>Next</h3>
+      <p>Read-only connectors to a real ERP, a bank payment file in place of direct payment, and a signing screen for the mandate.</p>
+      <p>The engine is open source; the box is a few hundred lines on one Vultr VM.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Hufu · Vultr Agent Rush</span><span>9</span></div>
+</section>
+
+<!-- 10 · close -->
+<section class="slide close">
+  <div class="left">
+    <h1>Code can't escape the box.<br>Money can't escape the mandate.</h1>
+    <ul class="rows links">
+      <li><b>Live demo</b><span class="mono" data-link="demo">https://&lt;vm-ip&gt;.sslip.io</span></li>
+      <li><b>Code</b><span class="mono" data-link="repo">github.com/&lt;owner&gt;/&lt;repo&gt;</span></li>
+      <li><b>Engine</b><span class="mono">github.com/hoongyu/mandate-engine</span></li>
+    </ul>
+  </div>
+  <div class="block">
+    <div class="dots light" style="inset: 0;"></div>
+    <svg viewBox="0 0 46 30" aria-hidden="true"><path d="M3 15c0-7 5-12 12-12h7v24h-7C8 27 3 22 3 15z" fill="#fff"/><path d="M24 3h7c7 0 12 5 12 12s-5 12-12 12h-7V3z" fill="#e2b27a"/><rect x="20" y="10" width="6" height="3" fill="#17408f"/><rect x="20" y="17" width="6" height="3" fill="#17408f"/></svg>
+  </div>
+</section>
+
+</body>
+</html>
